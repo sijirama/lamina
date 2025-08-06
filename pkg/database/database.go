@@ -10,18 +10,16 @@ import (
 	"lamina/pkg/config"
 )
 
-type Storage struct {
-	db *gorm.DB
-}
-
-var Store *Storage
+var Store *gorm.DB
 
 func NewStorage() error {
 	sqlite_vec.Auto() // Enable sqlite-vec functions
 
 	dbPath := config.GetDatabasePath()
 
-	db, err := gorm.Open(sqlite.Dialector{
+	var err error
+
+	Store, err = gorm.Open(sqlite.Dialector{
 		DriverName: "sqlite3",
 		DSN:        dbPath,
 	}, &gorm.Config{})
@@ -29,18 +27,25 @@ func NewStorage() error {
 		return fmt.Errorf("failed to open database: %w", err)
 	}
 
+	if err := Store.Exec(`
+        CREATE VIRTUAL TABLE IF NOT EXISTS vec_embeddings USING vec0(
+            file_id INTEGER PRIMARY KEY,
+            embedding FLOAT[1536]
+        )
+	`).Error; err != nil {
+		return fmt.Errorf("failed to create vector table: %w", err)
+	}
+
 	// Run migrations
-	if err := db.AutoMigrate(&File{}, &Embedding{}); err != nil {
+	if err := Store.AutoMigrate(&File{}); err != nil {
 		return fmt.Errorf("failed to migrate database: %w", err)
 	}
 
 	// Verify sqlite-vec extension
 	var vecVersion string
-	if err := db.Raw("SELECT vec_version()").Scan(&vecVersion).Error; err != nil {
+	if err := Store.Raw("SELECT vec_version()").Scan(&vecVersion).Error; err != nil {
 		return fmt.Errorf("failed to load sqlite-vec: %w", err)
 	}
-
-	Store = &Storage{db: db}
 
 	fmt.Printf("✅ sqlite-vec version: %s\n", vecVersion)
 

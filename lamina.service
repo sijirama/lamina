@@ -1,0 +1,11 @@
+[Unit]
+Description=Lamina
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/lamina daemon
+Restart=always
+User=sijirama
+
+[Install]
+WantedBy=multi-user.target

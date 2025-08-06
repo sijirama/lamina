@@ -6,20 +6,20 @@ import (
 
 // File represents a file's metadata.
 type File struct {
-	ID           uint      `gorm:"primaryKey"`
-	Path         string    `gorm:"uniqueIndex;not null"`
-	Name         string    `gorm:"not null"`
-	Size         int64     `gorm:"not null"`
-	LastModified time.Time `gorm:"not null"`
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID          uint   `gorm:"primaryKey"`
+	Path        string `gorm:"uniqueIndex;not null"`
+	ContentHash string `gorm:"index"`
+	Size        int64  `gorm:"not null"`
+	ModTime     time.Time
+	Content     string `gorm:"type:text"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 // Embedding represents a file's vector embedding.
 type Embedding struct {
-	ID        uint   `gorm:"primaryKey"`
-	FileID    uint   `gorm:"uniqueIndex;not null"`
-	Vector    []byte `gorm:"type:BLOB;not null"` // sqlite-vec BLOB
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID     uint   `gorm:"primaryKey"`
+	FileID uint   `gorm:"index"`
+	Vector []byte `gorm:"type:blob"`
+	File   File   `gorm:"foreignKey:FileID"`
 }
