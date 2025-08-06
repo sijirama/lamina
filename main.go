@@ -1,7 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"lamina/cmd"
+	"os"
+)
 
 func main() {
-	fmt.Println("Hello world")
+	if err := cmd.Execute(); err != nil {
+		fmt.Println("Lamina Error:", err)
+		os.Exit(1)
+	}
 }
