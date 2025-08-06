@@ -12,6 +12,7 @@ import (
 
 func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 	shouldReindex, err := i.shouldReindex(filePath)
+	fmt.Println("Should reindex ", filePath, " is ", shouldReindex)
 	if err != nil {
 		return err
 	}
@@ -33,7 +34,7 @@ func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 	contentHash := fmt.Sprintf("%x", sha256.Sum256(content))
 
 	// Generate embeddings
-	embeddingFloats, err := ai.GenerateEmbedding(string(content))
+	embeddingFloats, err := ai.GenerateEmbedding(ctx, string(content))
 	if err != nil {
 		return err
 	}
@@ -55,6 +56,8 @@ func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 	if err := database.Store.Save(&file).Error; err != nil {
 		return err
 	}
+
+	fmt.Println("Saved file for: ", file.ContentHash)
 
 	// Save embedding
 	return database.Store.Exec(`

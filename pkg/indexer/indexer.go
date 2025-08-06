@@ -35,6 +35,8 @@ func (i *Indexer) Start(ctx context.Context) error {
 		return fmt.Errorf("failed to start watcher: %w", err)
 	}
 
+	fmt.Println("Watcher started")
+
 	// Index all watch_paths on startup
 	if err := i.indexWatchPaths(ctx); err != nil {
 		return fmt.Errorf("failed to index watch paths: %w", err)
@@ -48,6 +50,8 @@ func (i *Indexer) Start(ctx context.Context) error {
 // indexWatchPaths indexes all configured watch_paths.
 func (i *Indexer) indexWatchPaths(ctx context.Context) error {
 	paths := config.GetWatchPaths()
+
+	fmt.Println("Indexing paths", paths)
 
 	for _, path := range paths {
 		if err := i.indexPath(ctx, path); err != nil {
@@ -73,8 +77,10 @@ func (i *Indexer) indexPath(ctx context.Context, path string) error {
 			}
 			return nil
 		}
-		// TODO: Extract file content, generate LLM embeddings, store in DB
-		fmt.Printf("Indexing: %s\n", filePath)
+
+		fmt.Println("Index path", path)
+		err = i.indexFile(ctx, path)
+		fmt.Println("Error indexing file: ", err.Error())
 		return nil
 	})
 }
@@ -84,8 +90,8 @@ func (i *Indexer) processEvents(ctx context.Context) {
 	for {
 		select {
 		case filePath := <-i.watcher.Events():
-			// TODO: Re-index or remove file from DB
-			fmt.Printf("Processing change: %s\n", filePath)
+			err := i.indexFile(ctx, filePath)
+			fmt.Println("Error indexing file: ", err.Error())
 		case <-ctx.Done():
 			return
 		}
