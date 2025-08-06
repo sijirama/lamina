@@ -14,7 +14,7 @@ func init() {
 	configCmd.AddCommand(listCmd)
 	configCmd.AddCommand(pathCmd)
 
-	//rootCmd.AddCommand() add new commands here siji
+	rootCmd.AddCommand(indexCmd)
 	rootCmd.AddCommand(configCmd)
 }
 
