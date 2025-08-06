@@ -9,23 +9,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var configPath string
-
-// valid configuration keys
-var stringConfigKeys = []string{
-	"provider",
-	"openai_key",
-	"gemini_key",
-	"database_path",
-}
-
-var stringSliceConfigKeys = []string{
-	"watch_paths",
-	"ignore_patterns",
-}
-
-var totalConfigKeys = append(stringConfigKeys, stringSliceConfigKeys...)
-
 func init() {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -52,17 +35,6 @@ func init() {
 		}
 		defer f.Close()
 
-		// Write basic YAML structure with defaults
-		defaultConfig := `# Lamina Configuration
-provider: gemini
-watch_paths:
-  - ~/Documents
-ignore_patterns:
-  - .git
-  - node_modules
-  - "*.log"
-database_path: ~/.lamina/lamina.db
-`
 		if _, err := f.WriteString(defaultConfig); err != nil {
 			panic(fmt.Errorf("could not write to config file %s: %w", configPath, err))
 		}
@@ -76,9 +48,10 @@ database_path: ~/.lamina/lamina.db
 
 	// Set default values in case config file is missing some keys
 	viper.SetDefault("provider", "gemini")
+	viper.SetDefault("database_path", filepath.Join(configDir, "lamina.db"))
 	viper.SetDefault("watch_paths", []string{filepath.Join(home, "Documents")})
 	viper.SetDefault("ignore_patterns", []string{".git", "node_modules", "*.log"})
-	viper.SetDefault("database_path", filepath.Join(configDir, "lamina.db"))
+
 }
 
 func isValidKey(key string) bool {
