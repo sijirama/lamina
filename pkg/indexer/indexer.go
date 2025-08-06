@@ -45,17 +45,6 @@ func (i *Indexer) Start(ctx context.Context) error {
 	return nil
 }
 
-// IndexPath indexes a specific path and adds it to watch_paths.
-func (i *Indexer) IndexPath(ctx context.Context, path string) error {
-	// Add path to watcher and config
-	if err := i.watcher.AddPath(path); err != nil {
-		return fmt.Errorf("failed to add path %s: %w", path, err)
-	}
-
-	// Index the path
-	return i.indexPath(ctx, path)
-}
-
 // indexWatchPaths indexes all configured watch_paths.
 func (i *Indexer) indexWatchPaths(ctx context.Context) error {
 	paths := config.GetWatchPaths()

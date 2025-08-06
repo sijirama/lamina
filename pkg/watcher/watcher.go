@@ -66,37 +66,6 @@ func (fw *FileWatcher) addPath(path string) error {
 	})
 }
 
-// AddPath adds a new path to watch and updates the config.
-func (fw *FileWatcher) AddPath(path string) error {
-	absPath, err := filepath.Abs(path)
-	if err != nil {
-		return fmt.Errorf("failed to resolve path %s: %w", path, err)
-	}
-
-	// Check if path already exists
-	paths := config.GetWatchPaths()
-
-	for _, p := range paths {
-		if p == absPath {
-			return nil // Already watched
-		}
-	}
-
-	// Add to config
-	paths = append(paths, absPath)
-	if err := config.SetConfigSliceValue("watch_paths", paths); err != nil {
-		return fmt.Errorf("failed to update watch paths: %w", err)
-	}
-
-	// Add to watcher
-	if err := fw.addPath(absPath); err != nil {
-		return fmt.Errorf("failed to watch path %s: %w", absPath, err)
-	}
-
-	fmt.Printf("✅ Watching new path: %s\n", absPath)
-	return nil
-}
-
 func (fw *FileWatcher) Events() <-chan string {
 	return fw.events
 }

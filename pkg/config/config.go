@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -56,37 +55,6 @@ func init() {
 
 }
 
-func isValidKey(key string) bool {
-	key = strings.ToLower(key)
-	for _, k := range totalConfigKeys {
-		if k == key {
-			return true
-		}
-	}
-	return false
-}
-
-// isSliceKey checks if a key is in stringSliceConfigKeys.
-func isSliceKey(key string) bool {
-	key = strings.ToLower(key)
-	for _, k := range stringSliceConfigKeys {
-		if k == key {
-			return true
-		}
-	}
-	return false
-}
-
-// validateRegex validates a slice of regex patterns.
-func validateRegex(patterns []string) error {
-	for _, pattern := range patterns {
-		if _, err := regexp.Compile(pattern); err != nil {
-			return fmt.Errorf("invalid regex pattern %s: %w", pattern, err)
-		}
-	}
-	return nil
-}
-
 // Get retrieves a configuration value by key.
 func Get(key string) string {
 	var result string
@@ -99,6 +67,10 @@ func Get(key string) string {
 
 func GetStringSlice(key string) []string {
 	return viper.GetStringSlice(key)
+}
+
+func GetConfigPath() string {
+	return configPath
 }
 
 // GetOpenAIKey returns the OpenAI API key.
@@ -149,21 +121,4 @@ func GetDatabasePath() string {
 	return filepath.Clean(path)
 }
 
-// SetConfigValue sets a configuration value and saves it to the config file.
-func SetConfigValue(key, value string) error {
-	viper.Set(strings.ToUpper(key), value)
-	viper.SetConfigType("yaml")
-	return viper.WriteConfigAs(configPath)
-}
-
-// SetConfigSliceValue sets a configuration slice value and saves it to the config file.
-func SetConfigSliceValue(key string, values []string) error {
-	viper.Set(strings.ToUpper(key), values)
-	viper.SetConfigType("yaml")
-	return viper.WriteConfigAs(configPath)
-}
-
 // GetConfigPath returns the path to the config file.
-func GetConfigPath() string {
-	return configPath
-}

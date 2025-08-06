@@ -12,37 +12,6 @@ var configCmd = &cobra.Command{
 	Long:  `Manage Lamina configuration settings`,
 }
 
-var setCmd = &cobra.Command{
-	Use:   "set [key] [value]",
-	Short: "Set a configuration value",
-	Args:  cobra.ExactArgs(2),
-	Run: func(cmd *cobra.Command, args []string) {
-		key := args[0]
-		value := args[1]
-		err := config.SetConfigValue(key, value)
-		if err != nil {
-			fmt.Println("❌ Error setting config:", err)
-			return
-		}
-		fmt.Printf("✅ Config set: %s = %s\n", key, value)
-	},
-}
-
-var getCmd = &cobra.Command{
-	Use:   "get [key]",
-	Short: "Get a configuration value",
-	Args:  cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		key := args[0]
-		value := config.Get(key)
-		if value == "" {
-			fmt.Printf("❌ Config key '%s' not found or empty\n", key)
-			return
-		}
-		fmt.Printf("%s = %s\n", key, value)
-	},
-}
-
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all configuration values",
