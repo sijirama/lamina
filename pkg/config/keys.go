@@ -13,6 +13,7 @@ var stringConfigKeys = []string{
 var stringSliceConfigKeys = []string{
 	"ignore_patterns",
 	"watch_paths",
+	"filetypes",
 }
 
 var totalConfigKeys = append(stringConfigKeys, stringSliceConfigKeys...)
@@ -28,4 +29,7 @@ ignore_patterns:
   - .git
   - node_modules
   - "*.log"
+filetypes:
+  - .*\.txt$
+  - .*\.md$
 `

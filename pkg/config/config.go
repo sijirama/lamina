@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -51,6 +52,7 @@ func init() {
 	viper.SetDefault("database_path", filepath.Join(configDir, "lamina.db"))
 	viper.SetDefault("watch_paths", []string{filepath.Join(home, "Documents")})
 	viper.SetDefault("ignore_patterns", []string{".git", "node_modules", "*.log"})
+	viper.SetDefault("filetypes", []string{".*\\.txt$", ".*\\.md$"})
 
 }
 
@@ -73,6 +75,16 @@ func isSliceKey(key string) bool {
 		}
 	}
 	return false
+}
+
+// validateRegex validates a slice of regex patterns.
+func validateRegex(patterns []string) error {
+	for _, pattern := range patterns {
+		if _, err := regexp.Compile(pattern); err != nil {
+			return fmt.Errorf("invalid regex pattern %s: %w", pattern, err)
+		}
+	}
+	return nil
 }
 
 // Get retrieves a configuration value by key.

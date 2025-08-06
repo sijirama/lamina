@@ -5,14 +5,18 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 
+	"github.com/tmc/langchaingo/embeddings"
 	"lamina/pkg/config"
 	"lamina/pkg/watcher"
 )
 
 // Indexer manages file indexing.
 type Indexer struct {
-	watcher *watcher.FileWatcher
+	watcher   *watcher.FileWatcher
+	embedder  *embeddings.Embedder
+	filetypes []*regexp.Regexp
 }
 
 // NewIndexer creates a new Indexer with a FileWatcher.
