@@ -76,6 +76,8 @@ func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 			return err
 		}
 	}
+
+	fmt.Printf("✅ Successfully indexed: %s\n", file.ContentHash)
 	return nil
 }
 

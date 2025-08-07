@@ -82,8 +82,6 @@ func (i *Indexer) indexPath(ctx context.Context, path string) error {
 
 		if err := i.indexFile(ctx, fullpath); err != nil {
 			fmt.Printf("❌ Error indexing file %s: %v\n", fullpath, err)
-		} else {
-			fmt.Printf("✅ Successfully indexed: %s\n", fullpath)
 		}
 		return nil
 	})
@@ -96,10 +94,7 @@ func (i *Indexer) processEvents(ctx context.Context) {
 		case filePath := <-i.watcher.Events():
 			if err := i.indexFile(ctx, filePath); err != nil {
 				fmt.Printf("❌ Error indexing file after modification %s: %v\n", filePath, err)
-			} else {
-				fmt.Printf("✅ Successfully indexed after modification: %s\n", filePath)
 			}
-
 		case <-ctx.Done():
 			return
 		}
