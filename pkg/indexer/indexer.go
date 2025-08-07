@@ -69,6 +69,7 @@ func (i *Indexer) indexPath(ctx context.Context, path string) error {
 		if err != nil {
 			return err
 		}
+
 		if info.IsDir() {
 			for _, pattern := range ignorePatterns {
 				if matched, _ := filepath.Match(pattern, info.Name()); matched {
@@ -77,10 +78,13 @@ func (i *Indexer) indexPath(ctx context.Context, path string) error {
 			}
 			return nil
 		}
+		fullpath := fmt.Sprintf("%s/%s", path, info.Name())
 
-		fmt.Println("Index path", path)
-		err = i.indexFile(ctx, path)
-		fmt.Println("Error indexing file: ", err.Error())
+		if err := i.indexFile(ctx, fullpath); err != nil {
+			fmt.Printf("❌ Error indexing file %s: %v\n", fullpath, err)
+		} else {
+			fmt.Printf("✅ Successfully indexed: %s\n", fullpath)
+		}
 		return nil
 	})
 }

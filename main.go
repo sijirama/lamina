@@ -9,6 +9,10 @@ import (
 	"os"
 )
 
+func init() {
+	must("Initialize Database", database.NewStorage())
+}
+
 func must(action string, err error) {
 	if err != nil {
 		panic("-> Failed to " + action + ": " + err.Error())
@@ -30,8 +34,6 @@ func main() {
 }
 
 func runDaemon() {
-	must("Initialize Database", database.NewStorage())
-
 	ctx := context.Background()
 	idx, err := indexer.NewIndexer()
 	if err != nil {

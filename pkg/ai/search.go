@@ -4,18 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"google.golang.org/genai"
 	"lamina/pkg/config"
 	"strings"
+
+	"google.golang.org/genai"
 )
 
-func GenerateEmbedding(ctx context.Context, content string) (embedding []float32, err error) {
+func GenerateQueryEmbedding(ctx context.Context, query string) ([]float32, error) {
 	provider := config.GetProvider()
-	fmt.Println(provider)
 
 	switch strings.ToLower(provider) {
-	case "openai":
-		return nil, errors.New("OpenAi provider not yet supported")
 	case "gemini":
 		geminiKey := config.GetGeminiKey()
 		if geminiKey == "" {
@@ -31,18 +29,18 @@ func GenerateEmbedding(ctx context.Context, content string) (embedding []float32
 		}
 
 		contents := []*genai.Content{
-			genai.NewContentFromText(content, genai.RoleUser),
+			genai.NewContentFromText(query, genai.RoleUser),
 		}
 
 		result, err := client.Models.EmbedContent(ctx,
 			"gemini-embedding-exp-03-07",
 			contents,
 			&genai.EmbedContentConfig{
-				TaskType: "RETRIEVAL_DOCUMENT", // For indexing documents
+				TaskType: "RETRIEVAL_QUERY", // For search queries
 			},
 		)
 		if err != nil {
-			return nil, fmt.Errorf("failed to generate embedding: %w", err)
+			return nil, fmt.Errorf("failed to generate query embedding: %w", err)
 		}
 
 		if len(result.Embeddings) == 0 {
@@ -50,8 +48,8 @@ func GenerateEmbedding(ctx context.Context, content string) (embedding []float32
 		}
 
 		return result.Embeddings[0].Values, nil
-	default:
-		return nil, errors.New(fmt.Sprintf("Invalid embedding model provider %s is not a valid provider", provider))
 
+	default:
+		return nil, fmt.Errorf("unsupported provider: %s", provider)
 	}
 }

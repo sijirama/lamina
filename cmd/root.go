@@ -11,8 +11,9 @@ func init() {
 	//subcommands to configCmd
 	configCmd.AddCommand(listCmd)
 	configCmd.AddCommand(pathCmd)
-
 	rootCmd.AddCommand(configCmd)
+
+	rootCmd.AddCommand(searchCmd)
 }
 
 var rootCmd = &cobra.Command{

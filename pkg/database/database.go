@@ -30,7 +30,7 @@ func NewStorage() error {
 	if err := Store.Exec(`
         CREATE VIRTUAL TABLE IF NOT EXISTS vec_embeddings USING vec0(
             file_id INTEGER PRIMARY KEY,
-            embedding FLOAT[1536]
+            embedding FLOAT[3072]
         )
 	`).Error; err != nil {
 		return fmt.Errorf("failed to create vector table: %w", err)

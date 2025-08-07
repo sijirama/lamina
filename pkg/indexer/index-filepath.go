@@ -32,6 +32,7 @@ func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 
 	info, _ := os.Stat(filePath)
 	contentHash := fmt.Sprintf("%x", sha256.Sum256(content))
+	fmt.Println(contentHash)
 
 	// Generate embeddings
 	embeddingFloats, err := ai.GenerateEmbedding(ctx, string(content))
@@ -57,13 +58,19 @@ func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 		return err
 	}
 
-	fmt.Println("Saved file for: ", file.ContentHash)
-
 	// Save embedding
-	return database.Store.Exec(`
+	err = database.Store.Exec(`
 	    INSERT OR REPLACE INTO vec_embeddings(file_id, embedding) 
 	    VALUES (?, ?)
 	`, file.ID, vectorBlob).Error
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Saved fucking file for: ", file.ContentHash, file.Path)
+
+	return nil
 }
 
 func (i *Indexer) shouldReindex(filePath string) (bool, error) {
