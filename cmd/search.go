@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// cmd/search.go
 var searchCmd = &cobra.Command{
 	Use:   "search [query]",
 	Short: "Search files by content",

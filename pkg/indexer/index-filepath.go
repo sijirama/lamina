@@ -42,7 +42,7 @@ func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 		return err
 	}
 
-	// Save to DB (upsert)
+	// Save to DB
 	file := database.File{
 		Path:        filePath,
 		ContentHash: contentHash,
@@ -53,7 +53,7 @@ func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 
 	// Use ON CONFLICT DO UPDATE for proper upsert
 	if err := database.Store.Clauses(clause.OnConflict{
-		Columns:   []clause.Column{{Name: "path"}}, // conflict on path column
+		Columns:   []clause.Column{{Name: "path"}},
 		DoUpdates: clause.AssignmentColumns([]string{"content_hash", "size", "mod_time", "content", "updated_at"}),
 	}).Create(&file).Error; err != nil {
 		return err

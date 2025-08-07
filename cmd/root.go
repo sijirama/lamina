@@ -9,7 +9,6 @@ import (
 func init() {
 
 	//subcommands to configCmd
-	configCmd.AddCommand(listCmd)
 	configCmd.AddCommand(pathCmd)
 	rootCmd.AddCommand(configCmd)
 

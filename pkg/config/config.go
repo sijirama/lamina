@@ -120,5 +120,3 @@ func GetDatabasePath() string {
 	}
 	return filepath.Clean(path)
 }
-
-// GetConfigPath returns the path to the config file.

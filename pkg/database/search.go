@@ -6,7 +6,6 @@ import (
 	"lamina/pkg/ai"
 )
 
-// database/search.go
 func SearchFiles(ctx context.Context, query string, limit int) ([]File, error) {
 	// Generate embedding for the search query
 	queryEmbedding, err := ai.GenerateQueryEmbedding(ctx, query)

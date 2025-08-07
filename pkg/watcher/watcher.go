@@ -14,7 +14,7 @@ import (
 // FileWatcher monitors directories for changes.
 type FileWatcher struct {
 	watcher        *fsnotify.Watcher
-	events         chan string // Channel for file events to be processed by indexer
+	events         chan string
 	ignorePatterns []string
 }
 
@@ -30,7 +30,7 @@ func NewFileWatcher() (*FileWatcher, error) {
 
 	return &FileWatcher{
 		watcher:        watcher,
-		events:         make(chan string, 100), // Buffered channel for events
+		events:         make(chan string, 100),
 		ignorePatterns: ignorePatterns,
 	}, nil
 }
@@ -103,7 +103,7 @@ func (fw *FileWatcher) watchEvents(ctx context.Context) {
 func (fw *FileWatcher) shouldIgnore(path string) bool {
 	base := filepath.Base(path)
 
-	if strings.HasSuffix(base, "~") {
+	if strings.HasSuffix(base, "~") { // plsssssssss skip the temporary files mehn
 		return true
 	}
 
