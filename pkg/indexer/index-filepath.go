@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	sqlite_vec "github.com/asg017/sqlite-vec-go-bindings/cgo"
+	"gorm.io/gorm/clause"
 	"lamina/pkg/ai"
 	"lamina/pkg/database"
 	"os"
@@ -50,20 +51,31 @@ func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 		Content:     string(content),
 	}
 
-	if err := database.Store.Save(&file).Error; err != nil {
+	// Use ON CONFLICT DO UPDATE for proper upsert
+	if err := database.Store.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "path"}}, // conflict on path column
+		DoUpdates: clause.AssignmentColumns([]string{"content_hash", "size", "mod_time", "content", "updated_at"}),
+	}).Create(&file).Error; err != nil {
 		return err
+
 	}
 
 	// Save embedding
-	err = database.Store.Exec(`
-	    INSERT OR REPLACE INTO vec_embeddings(file_id, embedding) 
-	    VALUES (?, ?)
-	`, file.ID, vectorBlob).Error
+	// Try to update first
+	result := database.Store.Exec(`
+	    UPDATE vec_embeddings SET embedding = ? WHERE file_id = ?
+	`, vectorBlob, file.ID)
 
-	if err != nil {
-		return err
+	// If no rows were affected, insert new record
+	if result.RowsAffected == 0 {
+		err = database.Store.Exec(`
+			INSERT INTO vec_embeddings(file_id, embedding) 
+			VALUES (?, ?)
+		    `, file.ID, vectorBlob).Error
+		if err != nil {
+			return err
+		}
 	}
-
 	return nil
 }
 
