@@ -11,7 +11,6 @@ import (
 
 func GenerateEmbedding(ctx context.Context, content string) (embedding []float32, err error) {
 	provider := config.GetProvider()
-	fmt.Println(provider)
 
 	switch strings.ToLower(provider) {
 	case "openai":

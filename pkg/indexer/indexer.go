@@ -94,8 +94,12 @@ func (i *Indexer) processEvents(ctx context.Context) {
 	for {
 		select {
 		case filePath := <-i.watcher.Events():
-			err := i.indexFile(ctx, filePath)
-			fmt.Println("Error indexing file: ", err.Error())
+			if err := i.indexFile(ctx, filePath); err != nil {
+				fmt.Printf("❌ Error indexing file after modification %s: %v\n", filePath, err)
+			} else {
+				fmt.Printf("✅ Successfully indexed after modification: %s\n", filePath)
+			}
+
 		case <-ctx.Done():
 			return
 		}

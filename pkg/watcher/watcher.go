@@ -6,6 +6,7 @@ import (
 	"lamina/pkg/config"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/fsnotify/fsnotify"
 )
@@ -101,6 +102,11 @@ func (fw *FileWatcher) watchEvents(ctx context.Context) {
 // shouldIgnore checks if a path matches any ignore patterns.
 func (fw *FileWatcher) shouldIgnore(path string) bool {
 	base := filepath.Base(path)
+
+	if strings.HasSuffix(base, "~") {
+		return true
+	}
+
 	for _, pattern := range fw.ignorePatterns {
 		if matched, _ := filepath.Match(pattern, base); matched {
 			return true

@@ -12,7 +12,6 @@ import (
 
 func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 	shouldReindex, err := i.shouldReindex(filePath)
-	fmt.Println("Should reindex ", filePath, " is ", shouldReindex)
 	if err != nil {
 		return err
 	}
@@ -22,8 +21,6 @@ func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 		return nil
 	}
 
-	fmt.Printf("📄 Indexing: %s\n", filePath)
-
 	// Read file
 	content, err := os.ReadFile(filePath)
 	if err != nil {
@@ -32,7 +29,6 @@ func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 
 	info, _ := os.Stat(filePath)
 	contentHash := fmt.Sprintf("%x", sha256.Sum256(content))
-	fmt.Println(contentHash)
 
 	// Generate embeddings
 	embeddingFloats, err := ai.GenerateEmbedding(ctx, string(content))
@@ -67,8 +63,6 @@ func (i *Indexer) indexFile(ctx context.Context, filePath string) error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("Saved fucking file for: ", file.ContentHash, file.Path)
 
 	return nil
 }
