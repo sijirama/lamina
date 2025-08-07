@@ -42,12 +42,12 @@ func NewStorage() error {
 	}
 
 	// Verify sqlite-vec extension
-	var vecVersion string
-	if err := Store.Raw("SELECT vec_version()").Scan(&vecVersion).Error; err != nil {
-		return fmt.Errorf("failed to load sqlite-vec: %w", err)
-	}
-
-	fmt.Printf("✅ sqlite-vec version: %s\n", vecVersion)
-
+	// var vecVersion string
+	// if err := Store.Raw("SELECT vec_version()").Scan(&vecVersion).Error; err != nil {
+	// 	return fmt.Errorf("failed to load sqlite-vec: %w", err)
+	// }
+	//
+	// fmt.Printf("✅ sqlite-vec version: %s\n", vecVersion)
+	//
 	return nil
 }

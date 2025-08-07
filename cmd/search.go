@@ -17,12 +17,6 @@ var searchCmd = &cobra.Command{
 		ctx := context.Background()
 		query := args[0]
 
-		// Initialize database
-		// if err := database.NewStorage(); err != nil {
-		// 	fmt.Printf("❌ Database error: %v\n", err)
-		// 	return
-		// }
-
 		// Search files
 		files, err := database.SearchFiles(ctx, query, 1)
 		if err != nil {
@@ -31,19 +25,13 @@ var searchCmd = &cobra.Command{
 		}
 
 		if len(files) == 0 {
-			fmt.Println("🔍 No files found matching your query")
+			fmt.Println("No files found matching your query")
 			return
 		}
 
-		fmt.Printf("🔍 Found %d files:\n\n", len(files))
+		fmt.Printf("Found %d files:\n\n", len(files))
 		for i, file := range files {
 			fmt.Printf("%d. %s\n", i+1, file.Path)
-			// Show a snippet of content
-			content := file.Content
-			if len(content) > 200 {
-				content = content[:200] + "..."
-			}
-			fmt.Printf("   %s\n\n", content)
 		}
 	},
 }
