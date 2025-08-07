@@ -34,7 +34,7 @@ func GenerateEmbedding(ctx context.Context, content string) (embedding []float32
 		}
 
 		result, err := client.Models.EmbedContent(ctx,
-			"gemini-embedding-exp-03-07",
+			"gemini-embedding-001",
 			contents,
 			&genai.EmbedContentConfig{
 				TaskType: "RETRIEVAL_DOCUMENT", // For indexing documents
