@@ -17,7 +17,7 @@ var searchCmd = &cobra.Command{
 		query := args[0]
 
 		// Search files
-		files, err := database.SearchFiles(ctx, query, 1)
+		files, err := database.SearchFiles(ctx, query, 2)
 		if err != nil {
 			fmt.Printf("❌ Search error: %v\n", err)
 			return
